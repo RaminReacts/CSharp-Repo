@@ -1,4 +1,6 @@
-﻿namespace MineSweeper
+﻿using System.Text.RegularExpressions;
+
+namespace MineSweeper
 {
     internal class Program
     {
@@ -13,7 +15,8 @@
             private  const char MINE = 'X';
             private  const int FIELD_SIZE = 9;
             private static char[,] mineField = new char[FIELD_SIZE, FIELD_SIZE];
-            private static List<List<int>> boardPoints;
+            private static List<List<int>> boardPoints = new List<List<int>>();
+            private static int minesNumber = 1;
 
             static MineSweeper()
             {
@@ -22,7 +25,32 @@
 
             public static void Run()
             {
+                AskForMinesNumber();
+                DistributeMines();
                 ShowBoard(mineField);
+            }
+            private static void AskForMinesNumber()
+            {
+                var limit = Math.Pow(FIELD_SIZE, 2) - 1;
+                Console.WriteLine($"How many mines do you want on the field [1 - {limit}]?");
+                var input = "";
+
+                do
+                {
+                    input = Console.ReadLine();
+                    if (!new Regex(@"\d+").IsMatch(input))
+                    {
+                        Console.WriteLine($"Please enter the number between [1 - {limit}]:");
+                        continue;
+                    }
+                    if (!(0 < int.Parse(input) && int.Parse(input) < limit))
+                    {
+                        Console.WriteLine($"Please enter the number between [1 - {limit}]:");
+                        continue;
+                    }
+                    minesNumber = int.Parse(input);
+                    break;
+                } while (true);
             }
 
             private static void GetBoardPoints()
@@ -74,7 +102,19 @@
 
             }
 
+            private static void DistributeMines()
+            {
+                GetBoardPoints();
+                Random random = new Random();
+                //var shuffledPoints = boardPoints.OrderBy(x => random.Next()).ToArray();
+                var shuffledPoints = boardPoints.OrderBy(a => Guid.NewGuid()).ToList();
+                var selectedPoints = shuffledPoints.Take(minesNumber);
+                foreach (var p in selectedPoints)
+                {
+                    mineField[p[0], p[1]] = MINE;
+                }
 
+            }
 
 
         }
