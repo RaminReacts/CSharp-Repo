@@ -4,7 +4,17 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            MineSweeper.Greet();
         }
+
+
+        static class MineSweeper
+        {
+            public static void Greet()
+            {
+                Console.WriteLine("Welcome to minsweeper!");
+            }
+        }
+
     }
 }
